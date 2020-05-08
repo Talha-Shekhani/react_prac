@@ -1,27 +1,44 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent'
+import { baseUrl } from '../shared/baseUrl'
+import {Fade, Stagger } from 'react-animation-components'
 
 function About(props) {
-    const leaders = props.leaders.map((leader) => {
+    const leaders = props.leaders.leaders.map((leader) => {
         return (
             <RenderLeader leaders={leader} />
         );
     });
 
     function RenderLeader({leaders}) {
-        return (
-            <Media key={leaders.id}>
-            <Media left middle>
-                <Media object src={leaders.image} alt={leaders.name} />
-            </Media>
-            <Media body className="ml-5">
-                <Media heading>{leaders.name}</Media>
-                <h6>{leaders.designation}</h6>
-                <p>{leaders.description}</p>
-            </Media>
-        </Media>
-        )
+        if (props.leaders.isLoading) {
+            return (
+                <Loading />
+            )
+        }
+        else if  (props.leaders.errMess) {
+            return (
+                <h4>{props.leaders.errMess}</h4>
+            )
+        }
+        else{
+            return (
+                <li key={leaders.id}>
+                    <Media>
+                        <Media left middle>
+                            <Media object src={baseUrl + leaders.image} alt={leaders.name} />
+                        </Media>
+                        <Media body className="ml-5">
+                            <Media heading>{leaders.name}</Media>
+                            <h6>{leaders.designation}</h6>
+                            <p>{leaders.description}</p>
+                        </Media>
+                    </Media>
+                </li>
+            )
+        }
     }
     return(
         <div className="container">
@@ -78,9 +95,13 @@ function About(props) {
                     <h2>Corporate Leadership</h2>
                 </div>
                 <div className="col-12">
-                    <Media list>
-                        {leaders}
-                    </Media>
+                    <div list className="list-unstyled">
+                        <Stagger in>
+                            <Fade in>
+                                {leaders}
+                            </Fade>
+                        </Stagger>
+                    </div>
                 </div>
             </div>
         </div>
